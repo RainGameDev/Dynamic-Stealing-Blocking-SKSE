@@ -17,7 +17,7 @@ Features
 - Watched = hands off. While any nearby NPC detects you, owned items can't be picked up.
 - Unseen = business as usual. If no one can see you, stealing works exactly like vanilla.
 - Shift to override. Need that item right now, consequences be damned? Hold Shift while activating to force the steal through.
-- Only affects theft. Regular, unowned objects, loot, your own belongings, containers you're allowed to use — are never touched.
+- Only affects theft. Regular, unowned objects, loot, your own belongings, containers you're allowed to use, are never touched.
 - Zero footprint. No new scripts, no ESP, no MCM, no save bloat. Just a single plugin.
 - Fully SE / AE / VR compatible from one file.
 
