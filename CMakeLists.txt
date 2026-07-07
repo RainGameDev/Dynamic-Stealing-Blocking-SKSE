@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 # ---- Project ----------------------------------------------------------------
 
 project(
-    MySKSEPlugin
+    DynamicStealingBlockingSKSE
     VERSION 0.0.1
     LANGUAGES CXX
 )
@@ -53,16 +53,36 @@ if(MSVC)
     # /permissive- disables -fms-compatibility, breaking those headers.
 endif()
 
-# ---- Optional: auto-deploy into a mod folder --------------------------------
-# Set MYSKSE_OUTPUT_DIR (e.g. your MO2 mods folder) to copy the built DLL there.
+# ---- Package the mod (DLL + translation files) ------------------------------
+# Translation files are plain UTF-16 text loaded by the game at runtime; they are
+# not compiled, just bundled next to the DLL in the mod's folder layout:
+#
+#     <mod>/SKSE/Plugins/<Plugin>.dll
+#     <mod>/Interface/Translations/<Plugin>_<language>.txt
+#
+# After every build, assemble that layout under build/mod/ so it is ready to zip
+# and upload as-is.
 
-if(DEFINED MYSKSE_OUTPUT_DIR AND NOT MYSKSE_OUTPUT_DIR STREQUAL "")
+set(DSB_STAGE_DIR "${CMAKE_BINARY_DIR}/mod")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DSB_STAGE_DIR}/SKSE/Plugins"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:${PROJECT_NAME}>" "${DSB_STAGE_DIR}/SKSE/Plugins/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Interface" "${DSB_STAGE_DIR}/Interface"
+    COMMENT "Staging mod (DLL + translations) in ${DSB_STAGE_DIR}"
+)
+
+# Optional: also copy the finished layout straight into a mod-manager folder.
+# Configure with -DDSB_OUTPUT_DIR="/path/to/MO2/mods/DynamicStealingBlockingSKSE".
+if(DEFINED DSB_OUTPUT_DIR AND NOT DSB_OUTPUT_DIR STREQUAL "")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-            "${MYSKSE_OUTPUT_DIR}/SKSE/Plugins"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${DSB_OUTPUT_DIR}/SKSE/Plugins"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "$<TARGET_FILE:${PROJECT_NAME}>"
-            "${MYSKSE_OUTPUT_DIR}/SKSE/Plugins/"
-        COMMENT "Deploying ${PROJECT_NAME}.dll to ${MYSKSE_OUTPUT_DIR}"
+            "$<TARGET_FILE:${PROJECT_NAME}>" "${DSB_OUTPUT_DIR}/SKSE/Plugins/"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/Interface" "${DSB_OUTPUT_DIR}/Interface"
+        COMMENT "Deploying mod to ${DSB_OUTPUT_DIR}"
     )
 endif()

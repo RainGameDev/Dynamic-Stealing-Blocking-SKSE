@@ -20,6 +20,7 @@ Features
 - Only affects theft. Regular, unowned objects, loot, your own belongings, containers you're allowed to use, are never touched.
 - Zero footprint. No new scripts, no ESP, no MCM, no save bloat. Just a single plugin.
 - Fully SE / AE / VR compatible from one file.
+- Translatable. The on-screen message is loaded from a translation file, so it can be changed or translated into any language without editing the plugin.
 
 ---
 
@@ -59,6 +60,9 @@ A: None you'll notice. The check only runs the moment you press the activate but
 
 Q: Compatibility?
 A: Very high. It doesn't edit any records, cells, or NPCs, so it won't conflict with city overhauls, AI mods, or other gameplay tweaks.
+
+Q: Can I change or translate the "I'm being watched" message?
+A: Yes. Open Interface/Translations/DynamicStealingBlockingSKSE_english.txt (a standard Skyrim UTF-16 translation file) and edit the text after the tab. To add another language, copy it to DynamicStealingBlockingSKSE_<language>.txt (e.g. DynamicStealingBlockingSKSE_french.txt) and translate the line - the game loads the file matching your sLanguage setting automatically.
 
 ---
 

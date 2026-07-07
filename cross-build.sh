@@ -22,19 +22,36 @@ fi
 
 NINJA="$(command -v ninja)"
 
+# Optional: copy the finished mod straight into a mod-manager folder.
+# e.g.  DSB_OUTPUT_DIR=/path/to/MO2/mods/DynamicStealingBlockingSKSE ./cross-build.sh
+DSB_OUTPUT_ARG=()
+if [ -n "${DSB_OUTPUT_DIR:-}" ]; then
+    DSB_OUTPUT_ARG=(-DDSB_OUTPUT_DIR="$DSB_OUTPUT_DIR")
+    echo ">> DSB_OUTPUT_DIR = $DSB_OUTPUT_DIR"
+fi
+
 cmake -S "$HERE" -B "$HERE/build-cross" -G Ninja \
     -DCMAKE_MAKE_PROGRAM="$NINJA" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
     -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE="$HERE/cmake/cross/clang-cl-windows.cmake" \
     -DVCPKG_OVERLAY_TRIPLETS="$HERE/cmake/triplets" \
-    -DVCPKG_TARGET_TRIPLET=x64-windows-static-md-cross \
+    -DVCPKG_TARGET_TRIPLET=x64-windows-static-cross \
     -DVCPKG_HOST_TRIPLET=x64-linux \
     -DVCPKG_INSTALL_OPTIONS="--allow-unsupported" \
-    -DXWIN_DIR="$XWIN_DIR"
+    -DXWIN_DIR="$XWIN_DIR" \
+    "${DSB_OUTPUT_ARG[@]}"
 
 cmake --build "$HERE/build-cross" --config Release
 
+# The POST_BUILD step assembled build-cross/mod/ (DLL + Interface/Translations).
+# Zip it into a ready-to-upload archive.
+STAGE="$HERE/build-cross/mod"
+ZIP="$HERE/build-cross/DynamicStealingBlockingSKSE.zip"
+rm -f "$ZIP"
+( cd "$STAGE" && zip -r -q "$ZIP" . )
+
 echo
-echo ">> Built:"
-find "$HERE/build-cross" -name '*.dll' -printf '   %p (%s bytes)\n'
+echo ">> Packaged mod:"
+( cd "$STAGE" && find . -type f -printf '   %p\n' )
+echo ">> Archive: $ZIP"

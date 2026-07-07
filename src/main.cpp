@@ -3,7 +3,7 @@
 #include "Hooks.h"
 
 namespace {
-    // Route SKSE/CommonLib logging to Documents/My Games/Skyrim.../SKSE/MySKSEPlugin.log
+    // Route SKSE/CommonLib logging to Documents/My Games/Skyrim.../SKSE/DynamicStealingBlockingSKSE.log
     void SetupLog() {
         auto path = SKSE::log::log_directory();
         if (!path) {
