@@ -55,7 +55,7 @@ Q: Is it safe to add or remove mid-playthrough?
 A: Yes. It doesn't run scripts or write anything to your save, so you can install or uninstall whenever you like.
 
 Q: Any performance impact?
-A: None you'll notice. The check only runs the moment you press the activate button on an owned item — never in the background.
+A: None you'll notice. The check only runs the moment you press the activate button on an owned item - never in the background.
 
 Q: Compatibility?
 A: Very high. It doesn't edit any records, cells, or NPCs, so it won't conflict with city overhauls, AI mods, or other gameplay tweaks.
