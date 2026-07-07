@@ -1,0 +1,22 @@
+# Build output
+/build/
+/build-debug/
+/build-cross/
+/out/
+/cmake-build-*/
+
+# Cross-compile Windows SDK/CRT (xwin splat, ~1GB)
+/.xwin/
+/.xwin-cache/
+
+# vcpkg
+/vcpkg_installed/
+
+# IDE
+/.vs/
+/.vscode/
+/.idea/
+*.user
+
+# Misc
+*.log
