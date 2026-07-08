@@ -121,6 +121,10 @@ namespace {
             return false;  // Shift always lets the steal through.
         }
 
+        if (auto player = RE::PlayerCharacter::GetSingleton(); player && player->IsGrabbing()) {
+            return false;
+        }
+
         auto pick = RE::CrosshairPickData::GetSingleton();
         if (!pick) {
             return false;
@@ -135,18 +139,19 @@ namespace {
         return PlayerIsDetected();  // Stealing: block only if someone sees you.
     }
 
-    /// If the process (stealign) is blocked then we force stop the input.
-    struct ProcessButtonHook {
+    /// When stealing is blocked only suppress the pickup, not the whole input.
+   struct ProcessButtonHook {
         static void thunk(RE::ActivateHandler*     a_this,
                           RE::ButtonEvent*         a_event,
                           RE::PlayerControlsData*  a_data) {
             if (a_event && ShouldBlockActivate()) {
-                // Notify once per press, not every held frame.
                 if (a_event->IsDown()) {
                     static const std::string msg = WatchedMessage();
                     RE::DebugNotification(msg.c_str());
                 }
-                return; 
+                if (a_event->IsUp()) {
+                    a_this->SetHeldButtonActionSuccess(true);
+                }
             }
             func(a_this, a_event, a_data);
         }
